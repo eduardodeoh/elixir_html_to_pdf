@@ -17,9 +17,10 @@ defmodule HtmlToPdf.Application do
       # Start Finch
       {Finch, name: HtmlToPdf.Finch},
       # Start the Endpoint (http/https)
-      HtmlToPdfWeb.Endpoint
+      HtmlToPdfWeb.Endpoint,
       # Start a worker by calling: HtmlToPdf.Worker.start_link(arg)
       # {HtmlToPdf.Worker, arg}
+      ChromicPDF
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
