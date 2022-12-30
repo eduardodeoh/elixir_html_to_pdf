@@ -59,6 +59,35 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+# Configures ChromicPDF
+config :html_to_pdf, ChromicPDF,
+  disable_scripts: true,
+  on_demand: false,
+  offline: true,
+  no_sandbox: true,
+  discard_stderr: true,
+  session_pool: [
+    size: 3,
+    timeout: 10_000,
+    init_timeout: 10_000
+  ],
+  ghostscript_pool: [size: 10],
+  max_session_uses: 1000,
+  # Chrome options
+  # https://hexdocs.pm/chromic_pdf/ChromicPDF.html#module-chrome-options
+  # https://peter.sh/experiments/chromium-command-line-switches/#print-to-pdf-no-header
+  # Default chrome args
+  # https://github.com/bitcrowd/chromic_pdf/blob/f3aa604e32ecbf18b7f57db4d501e1ecb94c695d/lib/chromic_pdf/pdf/chrome_impl.ex#L47
+  chrome_args:
+    ~w(
+      no-zygote
+      window-size=800,600
+      disable-webgl
+      font-render-hinting=none
+    )
+    |> Enum.map(&"--#{&1}")
+    |> Enum.join(" ")
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"

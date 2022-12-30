@@ -5,6 +5,8 @@ defmodule HtmlToPdf.Application do
 
   use Application
 
+  @chromic_pdf_opts Application.compile_env!(:html_to_pdf, ChromicPDF)
+
   @impl true
   def start(_type, _args) do
     children = [
@@ -20,7 +22,7 @@ defmodule HtmlToPdf.Application do
       HtmlToPdfWeb.Endpoint,
       # Start a worker by calling: HtmlToPdf.Worker.start_link(arg)
       # {HtmlToPdf.Worker, arg}
-      ChromicPDF
+      {ChromicPDF, chromic_pdf_opts()}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
@@ -35,5 +37,9 @@ defmodule HtmlToPdf.Application do
   def config_change(changed, _new, removed) do
     HtmlToPdfWeb.Endpoint.config_change(changed, removed)
     :ok
+  end
+
+  defp chromic_pdf_opts do
+    @chromic_pdf_opts
   end
 end
