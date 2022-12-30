@@ -1,0 +1,87 @@
+<section class="py-1">
+  <div class="max-w-full mx-auto py-1">
+    <article class="overflow-hidden">
+      <div class="rounded-b-md">
+        <div class="p-9">
+          <div class="flex w-full justify-center items-center">
+            <.report_image filename="phoenix.png" width="100" />
+            <p class="font-roboto text-4xl pl-3">Invoice</p>
+          </div>
+        </div>
+        <div class="space-y-3 text-slate-700"></div>
+        <div class="p-9">
+          <div class="flex w-full">
+            <div class="grid grid-cols-3 gap-16">
+              <.invoice_data
+                title={@invoice_source_data.title}
+                name={@invoice_source_data.name}
+                street={@invoice_source_data.street}
+                city={@invoice_source_data.city}
+                post_code={@invoice_source_data.post_code}
+              />
+              <.invoice_data
+                title={@invoice_target_data[:title]}
+                name={@invoice_target_data.name}
+                street={@invoice_target_data.street}
+                city={@invoice_target_data.city}
+                post_code={@invoice_target_data.post_code}
+                country={@invoice_target_data.country}
+              />
+              <.invoice_details
+                number={@invoice_details_data.number}
+                issue_date={@invoice_details_data.issue_date}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="p-9">
+          <div class="flex flex-col mx-0 mt-8">
+            <table class="min-w-full divide-y divide-slate-500">
+              <thead>
+                <tr>
+                  <th
+                    scope="col"
+                    class="py-3.5 pl-4 pr-3 text-left text-sm font-normal text-slate-700 sm:pl-6 md:pl-0"
+                  >
+                    Description
+                  </th>
+                  <th
+                    scope="col"
+                    class="hidden py-3.5 px-3 text-right text-sm font-normal text-slate-700 sm:table-cell"
+                  >
+                  </th>
+                  <th
+                    scope="col"
+                    class="hidden py-3.5 px-3 text-right text-sm font-normal text-slate-700 sm:table-cell"
+                  >
+                  </th>
+                  <th
+                    scope="col"
+                    class="py-3.5 pl-3 pr-4 text-right text-sm font-normal text-slate-700 sm:pr-6 md:pr-0"
+                  >
+                    Amount
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <.invoice_table_items items={@invoice_items} currency={@invoice_currency} />
+              </tbody>
+              <tfoot>
+                <.invoice_table_totals items={@invoice_totals} currency={@invoice_currency} />
+              </tfoot>
+            </table>
+          </div>
+        </div>
+
+        <div class="mt-auto p-9">
+          <.invoice_notes>
+            <p>
+              If payment of the revised invoice is not received within a further 14 days, additional interest rate of 5% will be charged to the overdue account.
+            </p>
+          </.invoice_notes>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
