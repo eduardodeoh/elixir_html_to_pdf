@@ -18,6 +18,7 @@ defmodule HtmlToPdfWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    live "/report_preview", ReportPreviewLive
   end
 
   # Other scopes may use custom stacks.
