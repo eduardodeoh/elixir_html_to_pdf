@@ -80,6 +80,13 @@ defmodule HtmlToPdfWeb do
     end
   end
 
+  def html_report do
+    quote do
+      use Phoenix.Component
+      import HtmlToPdfWeb.Reports.CoreComponents
+    end
+  end
+
   defp html_helpers do
     quote do
       # HTML escaping functionality
