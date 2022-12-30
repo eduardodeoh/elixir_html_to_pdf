@@ -53,7 +53,7 @@ defmodule HtmlToPdfWeb.ReportPreviewLive do
 
           {:ok, pdf_base64} =
             data
-            |> InvoiceHTML.render()
+            |> report_config.module.render()
             |> ReportPDF.generate_pdf_base64(pdf_metadata)
 
           assign(socket, pdf_base64: pdf_base64, show_report_preview: true)
