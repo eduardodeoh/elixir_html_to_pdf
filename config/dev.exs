@@ -58,9 +58,10 @@ config :html_to_pdf, HtmlToPdfWeb.Endpoint,
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/html_to_pdf_web/(live|views)/.*(ex)$",
+      ~r"lib/html_to_pdf_web/(live|views|reports)/.*(ex)$",
       ~r"lib/html_to_pdf_web/templates/.*(eex)$"
-    ]
+    ],
+    reload_page_on_css_changes: true
   ]
 
 # Enable dev routes for dashboard and mailbox

@@ -1,13 +1,13 @@
 defmodule HtmlToPdfWeb.ReportPreviewLive do
   use HtmlToPdfWeb, :live_view
 
-  alias HtmlToPdfWeb.Reports.InvoiceHTML
   alias HtmlToPdf.ReportPDF
   alias HtmlToPdfWeb.Reports
 
   def mount(_params, _session, socket) do
     reports = [
-      %{description: "Invoice", module: InvoiceHTML}
+      %{name: "invoice", description: "Invoice", module: Reports.InvoiceHTML},
+      %{name: "fake", description: "Fake Report", module: Reports.InvoiceHTML}
     ]
 
     socket = assign(socket, reports: reports, show_report_preview: false)
@@ -21,44 +21,51 @@ defmodule HtmlToPdfWeb.ReportPreviewLive do
       <aside class="w-100 h-screen bg-slate-700 p-10">
         <h1 class="text-white text-xl text-center">Preview Reports</h1>
         <ul class="w-64 mt-3 text-sm font-medium text-gray-900 bg-white rounded-lg">
-          <li :for={report <- @reports} class="py-2 px-4 w-full rounded-t-lg">
-            <%= report.description %>
-            <.button phx-click="preview" phx-value-report={report.description} class="ml-4">
-              Preview
-            </.button>
+          <li :for={report <- @reports} class="py-2 px-4 w-full rounded-t-lg text-center">
+            <.link patch={~p"/report_preview?name=#{report.name}"}>
+              Preview <%= report.description %>
+            </.link>
           </li>
         </ul>
       </aside>
       <main class="flex-1 max-h-full h-screen">
-        <Reports.CoreComponents.embed_pdf :if={@show_report_preview} content={@pdf_base64} />
+        <%= if @show_report_preview do %>
+          <Reports.CoreComponents.embed_pdf content={@pdf_base64} />
+        <% else %>
+          <h1 class="mt-10 text-xl text-center">Choose some report on menu to preview</h1>
+        <% end %>
       </main>
     </div>
     """
   end
 
-  def handle_event("preview", %{"report" => report}, socket) do
-    report_config =
-      socket.assigns
-      |> Map.get(:reports, [])
-      |> Enum.find(&(&1.description == report))
+  def handle_params(params, _uri, socket) do
+    socket =
+      case params["name"] do
+        nil ->
+          socket
 
-    updated_socket =
-      case socket.assigns.show_report_preview && report_config.description == report do
-        true ->
-          assign(socket, pdf_base64: nil, show_report_preview: false)
+        value ->
+          report_module =
+            socket.assigns
+            |> Map.get(:reports, [])
+            |> Enum.find(&(&1.name == value))
+            |> Map.fetch!(:module)
 
-        false ->
-          data = report_config.module.preview_data()
-          pdf_metadata = report_config.module.metadata_for_pdf()
-
-          {:ok, pdf_base64} =
-            data
-            |> report_config.module.render()
-            |> ReportPDF.generate_pdf_base64(pdf_metadata)
+          {:ok, pdf_base64} = generate_pdf_base64(report_module)
 
           assign(socket, pdf_base64: pdf_base64, show_report_preview: true)
       end
 
-    {:noreply, updated_socket}
+    {:noreply, socket}
+  end
+
+  defp generate_pdf_base64(report_module) do
+    data = report_module.preview_data()
+    pdf_metadata = report_module.metadata_for_pdf()
+
+    data
+    |> report_module.render()
+    |> ReportPDF.generate_pdf_base64(pdf_metadata)
   end
 end
